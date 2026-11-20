@@ -16,9 +16,18 @@ const filterGrupp = hamta("#filter");
 // DEL 1: din första händelse -------------------------------------------
 // 1. Hämta knappen .knapp i #hero. Lägg till en lyssnare för "click" som skriver ut
 //    handelse.type och handelse.target i Console.
-// 2. Lägg till handelse.preventDefault() i lyssnaren. Vad händer med länken?
-//    Ta bort preventDefault igen när du provat.
-// TODO
+const buttonMeny = document.querySelector(".knapp");
+buttonMeny!.addEventListener("click", (e) => {
+  // 2. Lägg till handelse.preventDefault() i lyssnaren. Vad händer med länken?
+  //    Ta bort preventDefault igen när du provat.
+  // TODO
+  console.log(`Typ av event: ${e.type}`);
+  console.log(`Elementet som generade eventet ${e.target}`);
+  e.preventDefault();
+  console.log("Btn kicked")
+});
+
+
 
 
 // DEL 2: filtret ----------------------------------------------------------
