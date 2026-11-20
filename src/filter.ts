@@ -8,4 +8,9 @@ import type { Ratt, Filter } from "./typer";
 // Okänt filter ger en tom lista.
 export function filtreraMeny(meny: Ratt[], filter: Filter): Ratt[] {
   // TODO
+  //Om filter är alla rå retunera samma lista
+  if (filter === "alla") return meny;
+  if (filter === "vegetarisk") return meny.filter((element) => element.vegetarisk);
+  //Annars det som finns i Kategori (definerad i typer.tx)
+  return  meny.filter((element) => element.kategori === filter);
 }

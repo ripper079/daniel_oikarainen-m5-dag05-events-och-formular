@@ -23,7 +23,7 @@ buttonMeny!.addEventListener("click", (e) => {
   // TODO
   console.log(`Typ av event: ${e.type}`);
   console.log(`Elementet som generade eventet ${e.target}`);
-  e.preventDefault();
+  //e.preventDefault();
   console.log("Btn kicked")
 });
 
