@@ -9,24 +9,28 @@ import type { Filter } from "./typer";
 //    Klick på något annat i gruppen ska inte göra något.
 //    Tips: handelse.target.closest('button[data-filter]')
 export function kopplaFilter(grupp: HTMLElement, vidVal: (filter: Filter) => void): void {
-  // TODO
-  //Alla knapper
-  let allChildButtons = grupp.querySelectorAll<HTMLButtonElement>('button');
-  //Nuka värdet på ALLA knappar i gruppen
-  for (const oneButton of allChildButtons)
-    oneButton.setAttribute("aria-pressed", "false");
+  // TODO  
+  //Kod utanför eventlistener körs enbart en gång varje gång kopplaFilter anropas
+  //console.log("kopplaFilter anropad...");
 
-  grupp.addEventListener("click", (eventObject) => {
+  //Observera Koden körs varje gång det klickas i containern för ALLA knappar
+  grupp.addEventListener("click", (eventObject) => {    
+    if (!(eventObject.target instanceof HTMLElement)) return ; 
     //Identifiera knapp
-    const knapp = (eventObject.target as Element).closest<HTMLButtonElement>('button[data-filter]');
+    //const knapp = (eventObject.target as Element).closest<HTMLButtonElement>('button[data-filter]');
+    const knapp = eventObject.target.closest<HTMLButtonElement>("button[data-filter]");
     
     //Klickat på ngt annat, gör inget
     if (!knapp) return ;
+
+    let allChildButtons = grupp.querySelectorAll<HTMLButtonElement>('button');
+    for (const oneButton of allChildButtons)
+      oneButton.setAttribute("aria-pressed", "false");
     
-    knapp?.setAttribute("aria-pressed", "true");
+    knapp.setAttribute("aria-pressed", "true");
     //Skickar med en av alla/vegetarisk/bakverk/dryck/lunch.
     //Detta är satt i html dokumentet. Specifiera at det du skickar är ett Filter!
-    vidVal(knapp?.dataset.filter as Filter);
+    vidVal(knapp.dataset.filter as Filter);
   });  
 }
 
