@@ -39,4 +39,12 @@ export function kopplaFilter(grupp: HTMLElement, vidVal: (filter: Filter) => voi
 //    Klick på något annat ska inte göra något.
 export function kopplaLaggTill(container: HTMLElement, vidLaggTill: (id: number) => void): void {
   // TODO
+  console.log("KopplaLäggtill anropad");
+
+  container.addEventListener("click", (eventObject) => {
+    const knapp = (eventObject.target as Element).closest<HTMLButtonElement>("button.lagg-i-order");
+    if (!knapp) return;
+
+    vidLaggTill(Number(knapp.dataset.id));
+  });
 }

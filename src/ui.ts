@@ -30,7 +30,14 @@ export function skapaRattKort(ratt: Ratt): HTMLElement {
 
   // DAG 5, TODO: skapa en knapp och lägg den sist i kortet:
   //   <button type="button" class="lagg-i-order" data-id="1" aria-label="Lägg Kardemummabulle i beställningen">Lägg i beställning</button>
-  kort.append(bild, rubrik, text, pris);
+  const buttonCard = document.createElement("button");
+  buttonCard.type = "button";
+  buttonCard.dataset.id = ratt.id.toString();
+  buttonCard.classList.add("lagg-i-order");
+  buttonCard.setAttribute(`aria-label`, `Lägg ${ratt.namn} i beställningen`);
+  buttonCard.textContent = "Lägg i beställning";
+  kort.append(bild, rubrik, text, pris, buttonCard);
+  
   return kort;
 }
 
