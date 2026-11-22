@@ -33,11 +33,44 @@ const regler: Record<string, (text: string) => string> = {
 //      Annars: falt.setAttribute("aria-invalid", "true") och aria-describedby = p:ts id.
 function visaFel(falt: Falt, meddelande: string): void {
   // TODO
+  const id = `${falt.name}-fel`;
+
+  // Hitta befintligt felelement, annars skapa det
+  let p = document.getElementById(id) as HTMLParagraphElement | null;
+  if (!p) {
+    p = document.createElement("p");
+    p.className = "falt-fel";
+    p.id = id;
+    falt.insertAdjacentElement("afterend", p);
+  }
+
+  p.textContent = meddelande;
+
+  if (meddelande === "") {
+    falt.removeAttribute("aria-invalid");
+    falt.removeAttribute("aria-describedby");
+  } else {
+    falt.setAttribute("aria-invalid", "true");
+    falt.setAttribute("aria-describedby", id);
+  }
 }
 
 // 2. Koppla varje fält i regler: validera när användaren LÄMNAR fältet ("blur"),
 //    och validera på nytt vid "input" men bara om fältet redan är markerat som fel (aria-invalid="true").
 // TODO
+for (const namn of Object.keys(regler)) {
+  const falt = hittaFalt(namn);
+  //När tappar focus, hämta rätt meddelnde för valideringen
+  falt.addEventListener("blur", () => {
+    visaFel(falt, regler[namn](falt.value));
+  });
+
+  falt.addEventListener("input", () => {
+    if (falt.getAttribute("aria-invalid") === "true") {
+      visaFel(falt, regler[namn](falt.value));
+    }
+  });
+}
 
 // 3. Vid "submit": preventDefault(). Validera hela formuläret med valideraFormular.
 //    - Finns fel: visa dem alla med visaFel, flytta fokus till första felaktiga fältet.
@@ -46,3 +79,28 @@ function visaFel(falt: Falt, meddelande: string): void {
 //    så loopa och ta bara värden där typeof varde === "string".
 //    Använd hittaFalt(namn) för att hämta ett fält med rätt typ.
 // TODO
+form.addEventListener("submit", (e) => {
+  //Skicka inte data till servern, som standard
+  e.preventDefault();
+  //Hämta värden fråm formuäär
+  const varden: Record<string, string> = {};
+  for (const [nyckel, varde] of new FormData(form)) {
+    if (typeof varde === "string") varden[nyckel] = varde;
+  }
+  //Hitta fel och valider
+  const fel = valideraFormular(varden, dagensDatum());
+  const namnMedFel = Object.keys(regler).filter((namn) => fel[namn]);
+
+  // Visa rätt felmeddelandenn
+  for (const namn of Object.keys(regler)) {
+    visaFel(hittaFalt(namn), fel[namn] ?? "");
+  }
+
+  if (namnMedFel.length > 0) {
+    bekraftelse.textContent = "";
+    hittaFalt(namnMedFel[0]).focus();
+  } else {
+    bekraftelse.textContent = "Tack! Vi bekräftar din bokning inom ett dygn.";
+    form.reset();
+  }
+});
